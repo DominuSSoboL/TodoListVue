@@ -93,44 +93,7 @@
             </v-flex>
         </v-layout>
 
-        <!-- MODAL ACCEPT DELETE TODOS -->
-        <v-dialog
-            v-model="deleteTodosModal"
-            width="500">
-            <v-card>
-                <v-card-title
-                    class="headline grey lighten-2"
-                    primary-title
-                    >
-                    Todolis removal
-                </v-card-title>
-
-                <v-card-text>
-                    Are you sure you want to delete the list? Once deleted, it cannot be restored.
-                </v-card-text>
-
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                        <v-btn
-                            color="primary"
-                            flat
-                            @click="deleteTodosModal = false">
-                            No I do not want
-                        </v-btn>
-                    <v-spacer></v-spacer>
-                        <v-btn
-                            color="primary"
-                            flat
-                            @click="deleteTodo">
-                            Yes, I want
-                        </v-btn>
-                </v-card-actions>
-            </v-card>
-
-        </v-dialog>
-
-        <!-- MODAL ACCEPT DELETE TODOS -->
+        <!-- MODAL EDITE TITLE TODOS -->
         <v-dialog
             v-model="editTodosTitleModal"
             width="500">
@@ -175,6 +138,89 @@
 
         </v-dialog>
 
+        <!-- MODAL EDITE TITLE TODOS -->
+        <v-dialog
+            v-model="editTodosTitleModal"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title
+                    >
+                    Edit title for todo list
+                </v-card-title>
+
+                <v-container grid-list-sm class="pa-4">
+                    <v-layout row wrap>
+
+                        <v-flex xs12>
+                            <v-form ref="form" validation>
+                            <v-text-field
+                                class="mb-4"
+                                name="title"
+                                label="Enter New Title"
+                                type="text"
+                                v-model="newTitleTodos"
+                            ></v-text-field>
+                            </v-form>
+                        </v-flex>
+
+                    </v-layout>
+                </v-container>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="editTodosTitle">
+                            EDIT
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
+
+
+        <!-- MODAL ACCEPT DELETE TODOS -->
+        <v-dialog
+            v-model="deleteTodosModal"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title
+                    >
+                    Todolis removal
+                </v-card-title>
+
+                <v-card-text>
+                    Are you sure you want to delete the list? Once deleted, it cannot be restored.
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="deleteTodosModal = false">
+                            No I do not want
+                        </v-btn>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="deleteTodo">
+                            Yes, I want
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
+
     </v-container>
 </template>
 
@@ -197,8 +243,10 @@
                 this.activeListId = id
             },
             deleteTodo () {
+                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
                 this.deleteTodosModal = false
-                this.$store.state.todos.splice(this.activeListId, 1);
+                this.$store.state.todos.splice(idx, 1);
+                console.log( this.$store.state.todos.length);
             },
             editTodosTitleOpenModal (id) {
                 this.editTodosTitleModal = true;
