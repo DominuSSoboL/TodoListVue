@@ -6,18 +6,32 @@
                 sm6
                 md4
                 v-for="todo of todos"
-                :key="todo.id"
-            >
+                :key="todo.id">
                 <v-card>
                     <v-card-title class="blue white--text">
+                        <v-btn 
+                            icon 
+                            dark
+                            title="Add task for todo list"
+                            @click="addTaskForTodoOpenModal(todo.id)">
+                            <v-icon>playlist_add</v-icon>
+                        </v-btn>
                         <span class="headline">{{todo.todoTotle}}</span>
 
                         <v-spacer></v-spacer>
 
-                        <v-btn icon dark>
+                        <v-btn 
+                            icon 
+                            dark
+                            title="Editing title todo"
+                            @click="editTodosTitleOpenModal(todo.id)">
                             <v-icon>create</v-icon>
                         </v-btn>
-                        <v-btn icon dark>
+                        <v-btn 
+                            icon 
+                            dark
+                            title="Delete todo list"
+                            @click="deleteTodosOpenModal(todo.id)">
                             <v-icon>delete</v-icon>
                         </v-btn>
                     </v-card-title>
@@ -26,18 +40,17 @@
                     <v-divider></v-divider>
 
                     <v-list
-                    subheader
-                    two-line
-                    v-for="task of todo.tasks"
-                    :key="task.id"
-                    >
+                        subheader
+                        two-line
+                        v-for="task of todo.tasks"
+                        :key="task.id">
 
                         <v-list-tile @click="">
                             <v-list-tile-action>
-                                <v-checkbox v-model="notifications"></v-checkbox>
+                                <v-checkbox></v-checkbox>
                             </v-list-tile-action>
 
-                            <v-list-tile-content @click="notifications = !notifications">
+                            <v-list-tile-content>
                                 <v-list-tile-title>{{task.taskTitle}}</v-list-tile-title>
                                 <v-list-tile-sub-title>{{task.deadline}}</v-list-tile-sub-title>
                             </v-list-tile-content>
@@ -66,7 +79,8 @@
                                     <v-list-tile @click="">
                                          <v-btn
                                             icon
-                                            white>
+                                            white
+                                            >
                                             <v-icon class="mr-1">delete</v-icon>
                                         </v-btn>
                                     </v-list-tile>
@@ -78,6 +92,133 @@
                 </v-card>
             </v-flex>
         </v-layout>
+
+        <!-- MODAL ADD TASK FOR TODOS -->
+        <v-dialog
+            v-model="addTaskForTodoModal"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title>
+                    Edit title for todo list
+                </v-card-title>
+
+                 <v-container grid-list-sm class="pa-4">
+                    <v-layout row wrap>
+
+                        <v-flex xs12>
+                            <v-form ref="form" validation>
+                            <v-text-field
+                                class="mb-4"
+                                name="title"
+                                label="Enter New Title"
+                                type="text"
+                                v-model="addTaskText"
+                            ></v-text-field>
+                            </v-form>
+                        </v-flex>
+
+                    </v-layout>
+                </v-container>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="addTaskForTodo">
+                            ADD TASK
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
+
+        <!-- MODAL EDITE TITLE TODOS -->
+        <v-dialog
+            v-model="editTodosTitleModal"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title
+                    >
+                    Edit title for todo list
+                </v-card-title>
+
+                <v-container grid-list-sm class="pa-4">
+                    <v-layout row wrap>
+
+                        <v-flex xs12>
+                            <v-form ref="form" validation>
+                            <v-text-field
+                                class="mb-4"
+                                name="title"
+                                label="Enter New Title"
+                                type="text"
+                                v-model="newTitleTodos"
+                            ></v-text-field>
+                            </v-form>
+                        </v-flex>
+
+                    </v-layout>
+                </v-container>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="editTodosTitle">
+                            EDIT
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
+
+        <!-- MODAL ACCEPT DELETE TODOS -->
+        <v-dialog
+            v-model="deleteTodosModal"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title
+                    >
+                    Todolis removal
+                </v-card-title>
+
+                <v-card-text>
+                    Are you sure you want to delete the list? Once deleted, it cannot be restored.
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="deleteTodosModal = false">
+                            No I do not want
+                        </v-btn>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="deleteTodo">
+                            Yes, I want
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
+
     </v-container>
 </template>
 
@@ -85,107 +226,50 @@
     export default {
         data() {
             return {
-                todos: [
-                    {
-                        todoTotle: 'For home',
-                        colorScheme: '',
-                        id: 1,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Learn Vue',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: '1'
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Learn Vuex',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: '2'
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Learn vuetify',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: '3'
-                            }
-                        ]
-                    },
-                    {
-                        todoTotle: 'For work',
-                        colorScheme: '',
-                        id: 2,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Drink coffee',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Make my work',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Do something',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Make Awesom App',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            }
-                        ]
-                    },
-                    {
-                        todoTotle: 'For work',
-                        colorScheme: '',
-                        id: 2,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Drink coffee',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            }
-                        ]
-                    },
-                    {
-                        todoTotle: 'For work',
-                        colorScheme: '',
-                        id: 2,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Drink coffee',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Make my work',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            }
-                        ]
-                    }
-                ]
+               todos: this.$store.state.todos,
+               deleteTodosModal: false,    // If true modal delete todo open
+               editTodosTitleModal: false, // If true modal edit title todo open
+               addTaskForTodoModal: false, // If true modal add task for todo open
+               addTaskText: '',
+               newTitleTodos: '',          
+               activeListId: 0
             }
-        }
+        },
+        methods: {
+            deleteTodosOpenModal(id) {
+                this.deleteTodosModal = true;
+                this.activeListId = id
+            },
+            deleteTodo () {
+                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
+                this.deleteTodosModal = false
+                this.$store.state.todos.splice(idx, 1);
+            },
+            editTodosTitleOpenModal (id) {
+                this.editTodosTitleModal = true;
+                this.activeListId = id
+            },
+            editTodosTitle () {
+                this.$store.state.todos[this.activeListId].todoTotle = this.newTitleTodos;
+                this.editTodosTitleModal = false
+            },
+            addTaskForTodoOpenModal (id) {
+                this.addTaskForTodoModal = true;
+                this.activeListId = id
+            },
+            addTaskForTodo () {
+                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
+                const taskId = this.$store.state.todos[idx].tasks.length;
+                this.$store.state.todos[idx].tasks.push({
+                    mark: false,
+                    taskTitle: this.addTaskText,
+                    deadline: '22.22.2022',
+                    url: '',
+                    id: taskId
+                });
+                this.addTaskText = ''
+                this.addTaskForTodoModal = false;
+            }
+        },
     }
 </script>

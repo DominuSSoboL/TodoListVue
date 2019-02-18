@@ -163,7 +163,7 @@
             id: this.$store.state.todos.length,
             tasks: []
         });
-        this.$store.state.correctTodosId++
+        this.createToDoTitle = ''
         this.dialog = false;
       }
     },

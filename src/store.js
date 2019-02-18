@@ -16,21 +16,21 @@ export default new Vuex.Store({
                   taskTitle: 'Learn Vue',
                   deadline: '19.02.2019',
                   url: '',
-                  id: 11
+                  id: 1111
               },                            
               {
                   mark: false,
                   taskTitle: 'Learn Vuex',
                   deadline: '19.02.2019',
                   url: '',
-                  id: 12
+                  id: 121111
               },                            
               {
                   mark: false,
                   taskTitle: 'Learn vuetify',
                   deadline: '19.02.2019',
                   url: '',
-                  id: 13
+                  id: 13111
               }
           ]
       }

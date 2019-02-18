@@ -13,7 +13,7 @@
                             icon 
                             dark
                             title="Add task for todo list"
-                            >
+                            @click="addTaskForTodoOpenModal(todo.id)">
                             <v-icon>playlist_add</v-icon>
                         </v-btn>
                         <span class="headline">{{todo.todoTotle}}</span>
@@ -47,10 +47,10 @@
 
                         <v-list-tile @click="">
                             <v-list-tile-action>
-                                <v-checkbox v-model="notifications"></v-checkbox>
+                                <v-checkbox></v-checkbox>
                             </v-list-tile-action>
 
-                            <v-list-tile-content @click="notifications = !notifications">
+                            <v-list-tile-content>
                                 <v-list-tile-title>{{task.taskTitle}}</v-list-tile-title>
                                 <v-list-tile-sub-title>{{task.deadline}}</v-list-tile-sub-title>
                             </v-list-tile-content>
@@ -93,19 +93,18 @@
             </v-flex>
         </v-layout>
 
-        <!-- MODAL EDITE TITLE TODOS -->
+        <!-- MODAL ADD TASK FOR TODOS -->
         <v-dialog
-            v-model="editTodosTitleModal"
+            v-model="addTaskForTodoModal"
             width="500">
             <v-card>
                 <v-card-title
                     class="headline grey lighten-2"
-                    primary-title
-                    >
+                    primary-title>
                     Edit title for todo list
                 </v-card-title>
 
-                <v-container grid-list-sm class="pa-4">
+                 <v-container grid-list-sm class="pa-4">
                     <v-layout row wrap>
 
                         <v-flex xs12>
@@ -115,7 +114,7 @@
                                 name="title"
                                 label="Enter New Title"
                                 type="text"
-                                v-model="newTitleTodos"
+                                v-model="addTaskText"
                             ></v-text-field>
                             </v-form>
                         </v-flex>
@@ -130,8 +129,8 @@
                         <v-btn
                             color="primary"
                             flat
-                            @click="editTodosTitle">
-                            EDIT
+                            @click="addTaskForTodo">
+                            ADD TASK
                         </v-btn>
                 </v-card-actions>
             </v-card>
@@ -182,7 +181,6 @@
             </v-card>
 
         </v-dialog>
-
 
         <!-- MODAL ACCEPT DELETE TODOS -->
         <v-dialog
@@ -229,12 +227,12 @@
         data() {
             return {
                todos: this.$store.state.todos,
-               correctTodosId: this.$store.state.correctTodosId,
-               deleteTodosModal: false,
-               editTodosTitleModal: false,
-               newTitleTodos: '',
-               activeListId: 0,
-               notifications: false
+               deleteTodosModal: false,    // If true modal delete todo open
+               editTodosTitleModal: false, // If true modal edit title todo open
+               addTaskForTodoModal: false, // If true modal add task for todo open
+               addTaskText: '',
+               newTitleTodos: '',          
+               activeListId: 0
             }
         },
         methods: {
@@ -246,15 +244,31 @@
                 const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
                 this.deleteTodosModal = false
                 this.$store.state.todos.splice(idx, 1);
-                console.log( this.$store.state.todos.length);
             },
             editTodosTitleOpenModal (id) {
                 this.editTodosTitleModal = true;
                 this.activeListId = id
             },
-            editTodosTitle() {
+            editTodosTitle () {
                 this.$store.state.todos[this.activeListId].todoTotle = this.newTitleTodos;
                 this.editTodosTitleModal = false
+            },
+            addTaskForTodoOpenModal (id) {
+                this.addTaskForTodoModal = true;
+                this.activeListId = id
+            },
+            addTaskForTodo () {
+                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
+                const taskId = this.$store.state.todos[idx].tasks.length;
+                this.$store.state.todos[idx].tasks.push({
+                    mark: false,
+                    taskTitle: this.addTaskText,
+                    deadline: '22.22.2022',
+                    url: '',
+                    id: taskId
+                });
+                this.addTaskText = ''
+                this.addTaskForTodoModal = false;
             }
         },
     }
