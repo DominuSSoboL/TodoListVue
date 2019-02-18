@@ -5,7 +5,7 @@
                 xs12
                 sm6
                 md4
-                v-for="todo of todos"
+                v-for="todo of ads"
                 :key="todo.id">
                 <v-card>
                     <v-card-title class="blue white--text">
@@ -27,6 +27,7 @@
                             @click="editTodosTitleOpenModal(todo.id)">
                             <v-icon>create</v-icon>
                         </v-btn>
+                        
                         <v-btn 
                             icon 
                             dark
@@ -46,7 +47,7 @@
                         :key="task.id">
 
                         <v-list-tile @click="">
-                            <v-list-tile-action>
+                            <v-list-tile-action @click="addMarkTask(todo.id, task.id)">
                                 <v-checkbox></v-checkbox>
                             </v-list-tile-action>
 
@@ -68,10 +69,25 @@
                                 </v-btn>
 
                                 <v-list>
+
+                                    <v-list-tile @click="">
+                                        <router-link 
+                                            icon
+                                            white
+                                            class="v-btn v-btn--icon theme--light"
+                                            tag="button"
+                                            title="More info for task"
+                                            :to="'/detail/' + task.id"
+                                            >
+                                            <v-icon class="mr-1 theme--light">info</v-icon>
+                                        </router-link>
+                                    </v-list-tile>
+
                                     <v-list-tile @click="">
                                         <v-btn
                                             icon 
-                                            greay>
+                                            greay
+                                            @click="editTaskTitle(task.id)">
                                             <v-icon class="ml-1">create</v-icon>
                                         </v-btn>
                                     </v-list-tile>
@@ -80,7 +96,7 @@
                                          <v-btn
                                             icon
                                             white
-                                            >
+                                            @click="deleteTaskTitleOpenModal(todo.id, task.id)">
                                             <v-icon class="mr-1">delete</v-icon>
                                         </v-btn>
                                     </v-list-tile>
@@ -131,6 +147,50 @@
                             flat
                             @click="addTaskForTodo">
                             ADD TASK
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
+
+        <!-- MODAL EDIT TASK FOR TODOS -->
+        <v-dialog
+            v-model="editTaskTodos"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title>
+                    Edit title for task
+                </v-card-title>
+
+                 <v-container grid-list-sm class="pa-4">
+                    <v-layout row wrap>
+
+                        <v-flex xs12>
+                            <v-form ref="form" validation>
+                            <v-text-field
+                                class="mb-4"
+                                name="title"
+                                label="Enter New Title"
+                                type="text"
+                                v-model="newTitleTask"
+                            ></v-text-field>
+                            </v-form>
+                        </v-flex>
+
+                    </v-layout>
+                </v-container>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="editTaskTitleOpenModal">
+                            Edit TASK
                         </v-btn>
                 </v-card-actions>
             </v-card>
@@ -221,7 +281,6 @@
 
     </v-container>
 </template>
-
 <script>
     export default {
         data() {
@@ -230,8 +289,10 @@
                deleteTodosModal: false,    // If true modal delete todo open
                editTodosTitleModal: false, // If true modal edit title todo open
                addTaskForTodoModal: false, // If true modal add task for todo open
+               editTaskTodos: false,
                addTaskText: '',
-               newTitleTodos: '',          
+               newTitleTodos: '',
+               newTitleTask: '',      
                activeListId: 0
             }
         },
@@ -241,16 +302,16 @@
                 this.activeListId = id
             },
             deleteTodo () {
-                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
+                const idx = this.$store.getters.ads.findIndex((el) => el.id === this.activeListId )
                 this.deleteTodosModal = false
-                this.$store.state.todos.splice(idx, 1);
+                this.$store.getters.ads.splice(idx, 1);
             },
             editTodosTitleOpenModal (id) {
                 this.editTodosTitleModal = true;
                 this.activeListId = id
             },
             editTodosTitle () {
-                this.$store.state.todos[this.activeListId].todoTotle = this.newTitleTodos;
+                this.$store.getters.ads[this.activeListId].todoTotle = this.newTitleTodos;
                 this.editTodosTitleModal = false
             },
             addTaskForTodoOpenModal (id) {
@@ -258,18 +319,69 @@
                 this.activeListId = id
             },
             addTaskForTodo () {
-                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
-                const taskId = this.$store.state.todos[idx].tasks.length;
-                this.$store.state.todos[idx].tasks.push({
+                const idx = this.$store.getters.ads.findIndex((el) => el.id === this.activeListId )
+                const taskId = this.$store.getters.ads[idx].tasks.length;
+                
+                this.$store.getters.ads[idx].tasks.push({
                     mark: false,
                     taskTitle: this.addTaskText,
                     deadline: '22.22.2022',
                     url: '',
-                    id: taskId
+                    id: this.activeListId.toString() + (taskId + 1)
                 });
                 this.addTaskText = ''
                 this.addTaskForTodoModal = false;
+            },
+            editTaskTitle (id) {
+                this.editTaskTodos = true;
+                this.activeListId = id;
+            },
+            editTaskTitleOpenModal () {
+                for(let i = 0; i < this.$store.getters.ads.length; i++){
+                    for(let m = 0; m < this.$store.getters.ads[i].tasks.length; m++){
+                        if(this.$store.getters.ads[i].tasks[m].id == this.activeListId){
+                            this.$store.getters.ads[i].tasks[m].taskTitle = this.newTitleTask;
+                        }
+                    }
+                }
+
+                this.addTaskText = ''
+                this.editTaskTodos = false;
+            },
+            deleteTaskTitleOpenModal (todoId, taskId) {
+                const idx = this.$store.getters.ads[todoId].tasks.findIndex(el => el.id === taskId)
+                const befoRemove = this.$store.getters.ads[todoId].tasks.slice(0, idx);
+                if(this.$store.getters.ads[todoId].tasks[idx + 1]){
+                    const afterRemove = this.$store.getters.ads[todoId].tasks.slice(idx + 1);
+                }
+                this.$store.getters.ads[todoId].tasks.splice(idx, 1);
+                if(afterRemove[0].id > 10){
+                    afterRemove.map(function(item){
+                        item.id = (item.id - 1).toString();
+                    });
+                } else {
+                    afterRemove.map(function(item){
+                        item.id = '0' + (item.id - 1).toString();
+                    });
+                }               
+                const newMass = [
+                    ...befoRemove,
+                    ...afterRemove
+                ]
+                return this.$store.getters.ads[todoId].tasks = {...newMass};
+            },
+            addMarkTask (todoId, taskId) {
+                // const idx = this.$store.state.todos.findIndex((el) => el.id === id )
+                console.log(todoId + '   ' + taskId);
             }
         },
+        computed: {
+            ads () {
+                return this.$store.getters.ads
+            }
+        }
     }
 </script>
+<style>
+    
+</style>
