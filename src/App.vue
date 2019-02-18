@@ -157,16 +157,21 @@
         return this.dialog = !this.dialog
       },
       createNewTodos () {
-        this.$store.state.todos.push({
+        this.$store.getters.ads.push({
             todoTotle: this.createToDoTitle,
             colorScheme: '',
-            id: this.$store.state.todos.length,
+            id: this.$store.getters.ads.length,
             tasks: []
         });
         this.createToDoTitle = ''
         this.dialog = false;
       }
     },
+    computed: {
+      ads () {
+        return this.$store.getters.ads
+      }
+    }
   }
 </script>
 

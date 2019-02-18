@@ -5,7 +5,7 @@
                 xs12
                 sm6
                 md4
-                v-for="todo of todos"
+                v-for="todo of ads"
                 :key="todo.id">
                 <v-card>
                     <v-card-title class="blue white--text">
@@ -46,7 +46,7 @@
                         :key="task.id">
 
                         <v-list-tile @click="">
-                            <v-list-tile-action>
+                            <v-list-tile-action @click="addMarkTask(todo.id, task.id)">
                                 <v-checkbox></v-checkbox>
                             </v-list-tile-action>
 
@@ -83,6 +83,19 @@
                                             >
                                             <v-icon class="mr-1">delete</v-icon>
                                         </v-btn>
+                                    </v-list-tile>
+
+                                    <v-list-tile @click="">
+                                        <router-link 
+                                            icon
+                                            white
+                                            class="v-btn v-btn--icon theme--light"
+                                            tag="button"
+                                            title="More info for task"
+                                            :to="'/detail/' + task.id"
+                                            >
+                                            <v-icon class="mr-1 theme--light">info</v-icon>
+                                        </router-link>
                                     </v-list-tile>
 
                                 </v-list>
@@ -241,16 +254,16 @@
                 this.activeListId = id
             },
             deleteTodo () {
-                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
+                const idx = this.$store.getters.ads.findIndex((el) => el.id === this.activeListId )
                 this.deleteTodosModal = false
-                this.$store.state.todos.splice(idx, 1);
+                this.$store.getters.ads.splice(idx, 1);
             },
             editTodosTitleOpenModal (id) {
                 this.editTodosTitleModal = true;
                 this.activeListId = id
             },
             editTodosTitle () {
-                this.$store.state.todos[this.activeListId].todoTotle = this.newTitleTodos;
+                this.$store.getters.ads[this.activeListId].todoTotle = this.newTitleTodos;
                 this.editTodosTitleModal = false
             },
             addTaskForTodoOpenModal (id) {
@@ -258,18 +271,28 @@
                 this.activeListId = id
             },
             addTaskForTodo () {
-                const idx = this.$store.state.todos.findIndex((el) => el.id === this.activeListId )
-                const taskId = this.$store.state.todos[idx].tasks.length;
-                this.$store.state.todos[idx].tasks.push({
+                const idx = this.$store.getters.ads.findIndex((el) => el.id === this.activeListId )
+                const taskId = this.$store.getters.ads[idx].tasks.length;
+                
+                this.$store.getters.ads[idx].tasks.push({
                     mark: false,
                     taskTitle: this.addTaskText,
                     deadline: '22.22.2022',
                     url: '',
-                    id: taskId
+                    id: this.activeListId.toString() + (taskId + 1)
                 });
                 this.addTaskText = ''
                 this.addTaskForTodoModal = false;
+            },
+            addMarkTask (todoId, taskId) {
+                // const idx = this.$store.state.todos.findIndex((el) => el.id === id )
+                console.log(todoId + '   ' + taskId);
             }
         },
+        computed: {
+            ads () {
+                return this.$store.getters.ads
+            }
+        }
     }
 </script>

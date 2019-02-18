@@ -26,6 +26,7 @@ export default new Router({
     },
     {
       path: '/detail/:id',
+      props: true,
       name: 'todoTaskDetails',
       component: TodoTaskDetails
     },
