@@ -117,7 +117,7 @@
                 <v-card-title
                     class="headline grey lighten-2"
                     primary-title>
-                    Edit title for todo list
+                    Add new task
                 </v-card-title>
 
                  <v-container grid-list-sm class="pa-4">
@@ -128,12 +128,14 @@
                             <v-text-field
                                 class="mb-4"
                                 name="title"
-                                label="Enter New Title"
+                                label="Enter your task"
                                 type="text"
                                 v-model="addTaskText"
                             ></v-text-field>
                             </v-form>
                         </v-flex>
+
+                       
 
                     </v-layout>
                 </v-container>
@@ -325,8 +327,7 @@
                 this.$store.getters.ads[idx].tasks.push({
                     mark: false,
                     taskTitle: this.addTaskText,
-                    deadline: '22.22.2022',
-                    url: '',
+                    deadline: this.date,
                     id: this.activeListId.toString() + (taskId + 1)
                 });
                 this.addTaskText = ''
@@ -349,30 +350,19 @@
                 this.editTaskTodos = false;
             },
             deleteTaskTitleOpenModal (todoId, taskId) {
-                const idx = this.$store.getters.ads[todoId].tasks.findIndex(el => el.id === taskId)
+                let idx = this.$store.getters.ads[todoId].tasks.findIndex(el => el.id === taskId);
                 const befoRemove = this.$store.getters.ads[todoId].tasks.slice(0, idx);
+                
                 if(this.$store.getters.ads[todoId].tasks[idx + 1]){
                     const afterRemove = this.$store.getters.ads[todoId].tasks.slice(idx + 1);
-                }
-                this.$store.getters.ads[todoId].tasks.splice(idx, 1);
-                if(afterRemove[0].id > 10){
-                    afterRemove.map(function(item){
-                        item.id = (item.id - 1).toString();
-                    });
+                    const newBeforeAfter = [...befoRemove, ...afterRemove];
+                    this.$store.getters.ads[todoId].tasks = newBeforeAfter;
                 } else {
-                    afterRemove.map(function(item){
-                        item.id = '0' + (item.id - 1).toString();
-                    });
-                }               
-                const newMass = [
-                    ...befoRemove,
-                    ...afterRemove
-                ]
-                return this.$store.getters.ads[todoId].tasks = {...newMass};
+                    this.$store.getters.ads[todoId].tasks = befoRemove;
+                }
             },
-            addMarkTask (todoId, taskId) {
-                // const idx = this.$store.state.todos.findIndex((el) => el.id === id )
-                console.log(todoId + '   ' + taskId);
+            addMarkTask() {
+
             }
         },
         computed: {
