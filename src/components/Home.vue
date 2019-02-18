@@ -24,14 +24,14 @@
                             icon 
                             dark
                             title="Editing title todo"
-                            >
+                            @click="editTodosTitleOpenModal(todo.id)">
                             <v-icon>create</v-icon>
                         </v-btn>
                         <v-btn 
                             icon 
                             dark
                             title="Delete todo list"
-                            @click="deleteOpenModal(todo.id)">
+                            @click="deleteTodosOpenModal(todo.id)">
                             <v-icon>delete</v-icon>
                         </v-btn>
                     </v-card-title>
@@ -95,7 +95,7 @@
 
         <!-- MODAL ACCEPT DELETE TODOS -->
         <v-dialog
-            v-model="deleteModal"
+            v-model="deleteTodosModal"
             width="500">
             <v-card>
                 <v-card-title
@@ -115,7 +115,7 @@
                         <v-btn
                             color="primary"
                             flat
-                            @click="deleteModal = false">
+                            @click="deleteTodosModal = false">
                             No I do not want
                         </v-btn>
                     <v-spacer></v-spacer>
@@ -129,6 +129,52 @@
             </v-card>
 
         </v-dialog>
+
+        <!-- MODAL ACCEPT DELETE TODOS -->
+        <v-dialog
+            v-model="editTodosTitleModal"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title
+                    >
+                    Edit title for todo list
+                </v-card-title>
+
+                <v-container grid-list-sm class="pa-4">
+                    <v-layout row wrap>
+
+                        <v-flex xs12>
+                            <v-form ref="form" validation>
+                            <v-text-field
+                                class="mb-4"
+                                name="title"
+                                label="Enter New Title"
+                                type="text"
+                                v-model="newTitleTodos"
+                            ></v-text-field>
+                            </v-form>
+                        </v-flex>
+
+                    </v-layout>
+                </v-container>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="editTodosTitle">
+                            EDIT
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
+
     </v-container>
 </template>
 
@@ -138,18 +184,29 @@
             return {
                todos: this.$store.state.todos,
                correctTodosId: this.$store.state.correctTodosId,
-               deleteModal: false,
-               deletTodosId: 0
+               deleteTodosModal: false,
+               editTodosTitleModal: false,
+               newTitleTodos: '',
+               activeListId: 0,
+               notifications: false
             }
         },
         methods: {
-            deleteOpenModal(id) {
-                this.deleteModal = true;
-                this.deletTodosId = id
+            deleteTodosOpenModal(id) {
+                this.deleteTodosModal = true;
+                this.activeListId = id
             },
             deleteTodo () {
-                this.deleteModal = false
-                this.$store.state.todos.splice(this.deletTodosId, 1);
+                this.deleteTodosModal = false
+                this.$store.state.todos.splice(this.activeListId, 1);
+            },
+            editTodosTitleOpenModal (id) {
+                this.editTodosTitleModal = true;
+                this.activeListId = id
+            },
+            editTodosTitle() {
+                this.$store.state.todos[this.activeListId].todoTotle = this.newTitleTodos;
+                this.editTodosTitleModal = false
             }
         },
     }
