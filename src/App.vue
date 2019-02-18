@@ -71,7 +71,7 @@
         <router-view></router-view>
     </v-content>
 
-    <!-- ADD TODOS -->
+    <!-- ADD TODOS BUTTON -->
     <v-btn
       fab
       bottom
@@ -86,36 +86,27 @@
     <!-- MODAL ADD TODOS -->
     <v-dialog v-model="dialog" width="800px">
       <v-card>
+
         <v-card-title
-          class="grey lighten-4 py-4 title"
-        >
+          class="grey lighten-4 py-4 title">
           Create Todo List
         </v-card-title>
+
         <v-container grid-list-sm class="pa-4">
           <v-layout row wrap>
 
-            <v-flex xs12 align-center justify-space-between>
-              
-            </v-flex>
-
-            <v-flex xs6>
-              
-            </v-flex>
-
-            <v-flex xs6>
-             
-            </v-flex>
-
             <v-flex xs12>
-             
-            </v-flex>
-
-            <v-flex xs12>
-             
-            </v-flex>
-
-            <v-flex xs12>
-             
+                <v-form ref="form" v-model="valid" validation>
+                  <v-text-field
+                    class="mb-4"
+                    name="title"
+                    label="Ad title for todo list"
+                    type="text"
+                    v-model="createToDoTitle"
+                    required
+                    :rules="[v => !!v || 'Title is required!']"
+                  ></v-text-field>
+                </v-form>
             </v-flex>
 
           </v-layout>
@@ -124,11 +115,16 @@
         <v-card-actions>
           <v-btn flat class="primary" @click="dialog = false">Cancel</v-btn>
           <v-spacer></v-spacer>
-          <v-btn flat class="success" @click="dialog = false">Save</v-btn>
+          <v-btn 
+            flat 
+            class="success"
+            :disabled="!valid"
+            @click="createNewTodos">Create add</v-btn>
         </v-card-actions>
 
       </v-card>
     </v-dialog>
+    
     
   </v-app>
 </template>
@@ -136,8 +132,11 @@
 <script>
   export default {
     data: () => ({
+      idTodosCreate: 100,
+      createToDoTitle: '',
       dialog: false,
       drawer: null,
+      valid: false,
       items: [
         { title: 'All todos', icon: 'list', url: '/list' }
       ],
@@ -156,6 +155,16 @@
     methods: {
       openDilog () {
         return this.dialog = !this.dialog
+      },
+      createNewTodos () {
+        this.$store.state.todos.push({
+            todoTotle: this.createToDoTitle,
+            colorScheme: '',
+            id: this.$store.state.todos.length,
+            tasks: []
+        });
+        this.$store.state.correctTodosId++
+        this.dialog = false;
       }
     },
   }

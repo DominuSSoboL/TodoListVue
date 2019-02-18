@@ -6,18 +6,32 @@
                 sm6
                 md4
                 v-for="todo of todos"
-                :key="todo.id"
-            >
+                :key="todo.id">
                 <v-card>
                     <v-card-title class="blue white--text">
+                        <v-btn 
+                            icon 
+                            dark
+                            title="Add task for todo list"
+                            >
+                            <v-icon>playlist_add</v-icon>
+                        </v-btn>
                         <span class="headline">{{todo.todoTotle}}</span>
 
                         <v-spacer></v-spacer>
 
-                        <v-btn icon dark>
+                        <v-btn 
+                            icon 
+                            dark
+                            title="Editing title todo"
+                            >
                             <v-icon>create</v-icon>
                         </v-btn>
-                        <v-btn icon dark>
+                        <v-btn 
+                            icon 
+                            dark
+                            title="Delete todo list"
+                            @click="deleteOpenModal(todo.id)">
                             <v-icon>delete</v-icon>
                         </v-btn>
                     </v-card-title>
@@ -26,11 +40,10 @@
                     <v-divider></v-divider>
 
                     <v-list
-                    subheader
-                    two-line
-                    v-for="task of todo.tasks"
-                    :key="task.id"
-                    >
+                        subheader
+                        two-line
+                        v-for="task of todo.tasks"
+                        :key="task.id">
 
                         <v-list-tile @click="">
                             <v-list-tile-action>
@@ -66,7 +79,8 @@
                                     <v-list-tile @click="">
                                          <v-btn
                                             icon
-                                            white>
+                                            white
+                                            >
                                             <v-icon class="mr-1">delete</v-icon>
                                         </v-btn>
                                     </v-list-tile>
@@ -78,6 +92,43 @@
                 </v-card>
             </v-flex>
         </v-layout>
+
+        <!-- MODAL ACCEPT DELETE TODOS -->
+        <v-dialog
+            v-model="deleteModal"
+            width="500">
+            <v-card>
+                <v-card-title
+                    class="headline grey lighten-2"
+                    primary-title
+                    >
+                    Todolis removal
+                </v-card-title>
+
+                <v-card-text>
+                    Are you sure you want to delete the list? Once deleted, it cannot be restored.
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="deleteModal = false">
+                            No I do not want
+                        </v-btn>
+                    <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            flat
+                            @click="deleteTodo">
+                            Yes, I want
+                        </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
     </v-container>
 </template>
 
@@ -85,107 +136,21 @@
     export default {
         data() {
             return {
-                todos: [
-                    {
-                        todoTotle: 'For home',
-                        colorScheme: '',
-                        id: 1,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Learn Vue',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: '1'
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Learn Vuex',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: '2'
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Learn vuetify',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: '3'
-                            }
-                        ]
-                    },
-                    {
-                        todoTotle: 'For work',
-                        colorScheme: '',
-                        id: 2,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Drink coffee',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Make my work',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Do something',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Make Awesom App',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            }
-                        ]
-                    },
-                    {
-                        todoTotle: 'For work',
-                        colorScheme: '',
-                        id: 2,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Drink coffee',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            }
-                        ]
-                    },
-                    {
-                        todoTotle: 'For work',
-                        colorScheme: '',
-                        id: 2,
-                        tasks: [
-                            {
-                                mark: false,
-                                taskTitle: 'Drink coffee',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            },                            
-                            {
-                                mark: false,
-                                taskTitle: 'Make my work',
-                                deadline: '19.02.2019',
-                                url: '',
-                                id: ''
-                            }
-                        ]
-                    }
-                ]
+               todos: this.$store.state.todos,
+               correctTodosId: this.$store.state.correctTodosId,
+               deleteModal: false,
+               deletTodosId: 0
             }
-        }
+        },
+        methods: {
+            deleteOpenModal(id) {
+                this.deleteModal = true;
+                this.deletTodosId = id
+            },
+            deleteTodo () {
+                this.deleteModal = false
+                this.$store.state.todos.splice(this.deletTodosId, 1);
+            }
+        },
     }
 </script>
