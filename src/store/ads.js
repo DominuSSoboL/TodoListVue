@@ -42,7 +42,7 @@ export default {
                             return state.todos[i].tasks[m]
                         }
                     }
-                }           
+                }
             }
         }
     }
